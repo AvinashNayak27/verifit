@@ -1,46 +1,103 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Slider } from "@/components/ui/slider"
-import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useRouter } from "next/navigation";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
+import * as Clerk from "@clerk/elements/common";
+import { Icons } from "@/components/ui/icons";
+import * as SignIn from "@clerk/elements/sign-in";
+import { useUser } from '@clerk/clerk-react'
 
 export function ProfileSetupComponent() {
-  const [stepGoal, setStepGoal] = useState(10000)
-  const router = useRouter()
+  const router = useRouter();
+  const { isSignedIn, user, isLoaded } = useUser()
+  const [countdown, setCountdown] = useState(3);
+
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      const timer = setInterval(() => {
+        setCountdown((prevCount) => {
+          if (prevCount === 1) {
+            clearInterval(timer);
+            router.push("/dashboard");
+          }
+          return prevCount - 1;
+        });
+      }, 1000);
+      return () => clearInterval(timer); // Clean up the timer
+    }
+  }, [isSignedIn, isLoaded, router]);
+
+  if (!isLoaded) {
+    return null;
+  }
 
   return (
-    (<div
-      className="flex items-center justify-center min-h-screen bg-gradient-to-br from-primary-50 to-primary-100">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-primary-50 to-primary-100">
       <Card className="w-[400px]">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">Set Up Your Profile</CardTitle>
-          <CardDescription>Customize your FitChain experience</CardDescription>
+          <CardTitle className="text-2xl font-bold text-center">
+            FitChain Setup
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Your Name</Label>
-            <Input id="name" placeholder="Enter your name" />
-          </div>
-          <Button className="w-full" variant="outline">
-            Connect Google Fit
-          </Button>
-          <div className="space-y-2">
-            <Label>Daily Step Goal</Label>
-            <Slider
-              min={1000}
-              max={20000}
-              step={1000}
-              value={[stepGoal]}
-              onValueChange={(value) => setStepGoal(value[0])} />
-            <p className="text-sm text-neutral-500 text-center dark:text-neutral-400">{stepGoal.toLocaleString()} steps</p>
-          </div>
-          <Button className="w-full" onClick={() => router.push("/dashboard")}>Save Profile</Button>
+          <SignedOut>
+            <SignIn.Root>
+              <Clerk.Loading>
+                {(isGlobalLoading) => (
+                  <SignIn.Step name="start">
+                    <Clerk.Connection name="google" asChild>
+                      <Button
+                        variant="outline"
+                        className="w-full"
+                        type="button"
+                        disabled={isGlobalLoading}
+                      >
+                        <Clerk.Loading scope="provider:google">
+                          {(isLoading) =>
+                            isLoading ? (
+                              <Icons.spinner className="size-4 animate-spin" />
+                            ) : (
+                              <>
+                                <Icons.google className="mr-2 size-4" />
+                                Connect Google Fit
+                              </>
+                            )
+                          }
+                        </Clerk.Loading>
+                      </Button>
+                    </Clerk.Connection>
+                  </SignIn.Step>
+                )}
+              </Clerk.Loading>
+            </SignIn.Root>
+          </SignedOut>
+          <SignedIn>
+            <div className="text-center space-y-4">
+              <Button
+                variant="outline"
+                className="w-full border-green-500 text-green-500 hover:bg-green-50"
+                disabled
+              >
+                Google Fit Connected
+              </Button>
+              <p className="text-lg font-semibold">
+                Welcome, {user?.firstName}!
+              </p>
+              <p className="text-sm text-neutral-500">
+                Redirecting to dashboard in {countdown}...
+              </p>
+            </div>
+          </SignedIn>
         </CardContent>
       </Card>
-    </div>)
+    </div>
   );
 }

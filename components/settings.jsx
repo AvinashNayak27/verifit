@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Award, Gift, Home, Trophy, Wallet, Mail, User, Bell } from "lucide-react"
 import { NavigationBar } from "./navigation-bar"
+import { SignOutButton } from "@clerk/nextjs";
 
 export function Settings() {
   const [isWalletConnected, setIsWalletConnected] = useState(true)
@@ -111,6 +112,13 @@ export function Settings() {
             </div>
           </CardContent>
         </Card>
+
+        {/* New logout button */}
+        <SignOutButton>
+          <Button variant="destructive" className="w-full">
+            Logout
+          </Button>
+        </SignOutButton>
       </div>
       <NavigationBar />
     </div>)
