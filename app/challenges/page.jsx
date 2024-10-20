@@ -1,9 +1,9 @@
 import React from 'react'
-import {ChallengeSectionComponent } from '@/components/challenge-section'
+import { FitnessQuests } from '@/components/challenge-section'
 
 function Challenges() {
   return (
-    <ChallengeSectionComponent />
+    <FitnessQuests />
   )
 }
 

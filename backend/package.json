@@ -1,0 +1,15 @@
+{
+  "name": "verifit-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@reclaimprotocol/js-sdk": "^2.0.2",
+    "@reclaimprotocol/zk-fetch": "0.1.5",
+    "cors": "^2.8.5",
+    "express": "^4.21.1"
+  },
+  "devDependencies": {
+    "@flydotio/dockerfile": "^0.5.9"
+  }
+}

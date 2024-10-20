@@ -1,0 +1,12 @@
+node_modules
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+.dockerignore
+test.js
+demo.js
+fly.toml
+yarn.lock

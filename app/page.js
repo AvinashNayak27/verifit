@@ -1,9 +1,9 @@
 import React from 'react'
-import {Onboarding} from '@/components/onboarding'
+import {ProfileSetupComponent} from '@/components/profile-setup'
 
 function Home() {
   return (
-    <Onboarding />
+    <ProfileSetupComponent />
   )
 }
 
